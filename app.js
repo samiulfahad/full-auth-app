@@ -25,15 +25,17 @@ app.use(session({
     store: store
 }))
 
-app.get('/', (req, res) => {
-    res.render('index', { isLoggedIn: req.session.isLoggedIn, msg: req.session.msg })
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = req.session.isLoggedIn
+    res.locals.successMsg = req.session.successMsg
+    res.locals.errorMsg = req.session.errorMsg
+    req.session.successMsg = undefined
+    req.session.errorMsg = undefined
+    next()
 })
 
-app.get('/s', (req, res) => {
-    req.session.msg = 'Testing.....'
-    req.session.isLoggedIn = true
-    req.session.cookie.maxAge = 5000
-    res.render('index', { isLoggedIn: req.session.isLoggedIn, msg: req.session.msg })
+app.get('/', (req, res) => {
+    res.render('index', { email: '' })
 })
 
 app.get('/signup', (req, res) => {
@@ -44,26 +46,33 @@ app.post('/signup', async (req, res) => {
     const name = req.body.name
     const email = req.body.email.trim().toLowerCase()
     const password = req.body.password
-    const user = await new User (name, email, password)
-    const savedUser = await user.save()
-    if(!savedUser){
-        return res.render('error', { isLoggedIn: req.session.isLoggedIn })
+    const user = new User (name, email, password)
+    const result = await user.save()
+    req.session.isLoggedIn = false
+    req.session.cookie.maxAge = 5000
+    if(result === 11000) {
+        req.session.errorMsg = 'Email already exists'
+        return res.redirect('/signup')
     }
-    res.send(savedUser)
+    if(!result){
+        return res.render('error')
+    }
+    req.session.successMsg = 'Account Created. Please Login'
+    res.redirect('login')
     // res.redirect('/login')
 })
 
 app.get('/login', (req, res) => {
-    res.render('login', { isLoggedIn: req.session.isLoggedIn })
+    res.render('login', {email: ''})
 })
 
 app.post('/login', async (req, res) => {
     try{
-        const email = req.body.loginEmail.trim().toLowerCase()
-        const password = req.body.loginPassword
-        const user = await User.findUser(email, password)
+        const email = req.body.email.trim().toLowerCase()
+        const password = req.body.password
+        const user = await User.Login(email, password)
         if(!user){
-            return res.send('No user Found')
+            return res.render('login', {errorMsg: 'No user Found', email: email})
         }
         req.session.user = user
         req.session.isLoggedIn = true
@@ -87,7 +96,46 @@ app.post('/logout', (req, res) => {
     })
 })
 
+app.get('/reset-password', (req, res, next) => {
+    res.render('resetPassword', {isLoggedIn: false})
+})
+
+app.post('/reset-password', async (req, res, next) => {
+    const email = req.body.email.trim().toLowerCase()
+    const resetToken = await User.EmailResetToken(email)
+    console.log(resetToken);
+    res.render('passwordResetMsg', {isLoggedIn: false})
+})
+
+
+app.get('/update-password', async (req, res, next) => {
+    const resetToken = req.query.token
+    const userId = req.query.userId
+    const result = await User.FindResetToken(userId, resetToken)
+    if( !result ) {
+        return res.render('resetPassword', {isLoggedIn: false})
+    }
+    res.render('updatePassword', {userId: userId, token: resetToken})
+})
+
+app.post('/update-password', async (req, res, next) => {
+    const token = req.body.token
+    const userId = req.body.userId
+    const password = req.body.password
+    const result = await User.ResetPassword(userId, token, password)
+    if( !result ) {
+        return res.render('resetPassword', {isLoggedIn: false})
+    }
+    res.render('login', {isLoggedIn : false})
+})
+
 app.listen(3000, async()=>{
-    const db = await connectDB()
-    console.log('Server is listening on port 3000');
+    try{
+        const db = await connectDB()
+        const result = await db.collection('users').createIndex({email: 1}, {unique: true})
+        console.log('Server is listening on port 3000');
+    } 
+    catch (err) {
+        console.log(err);
+    }
 })

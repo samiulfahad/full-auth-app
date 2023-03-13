@@ -6,25 +6,14 @@
     <section>
         <% if(!isLoggedIn) { %>
 
-            <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-between items-center md:px-10 md:space-x-16">
+            <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-center items-center md:px-10 md:space-x-16">
                 <%- include('loginForm') %>
-                <div class="fornt-bold text-lg hidden md:block"><p>Or</p></div>
-                <div class="fornt-bold text-lg block md:hidden"><p>Create a new Account</p></div>
-                <%- include('signupForm') %>
             </div>
 
         <% } else { %>
 
             <div class="text-lg text-center mx-auto max-w-4xl font-bold mt-10 text-green-500">
                 <p>Your are Logged In and Your Session will be expired after 30 Sec</p>
-            </div>
-
-        <% } %>
-        
-        <% if(msg) { %>
-
-            <div class="text-lg text-center mx-auto max-w-4xl font-bold mt-10 text-green-500">
-                <p><%= msg %></p>
             </div>
 
         <% } %>
