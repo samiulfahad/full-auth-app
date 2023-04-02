@@ -4,28 +4,25 @@
             class="absolute inset-0 bg-gradient-to-r from-pink-300 to-pink-600 shadow-lg transform -skew-y-6 sm:skew-y-0 sm:-rotate-6 sm:rounded-3xl">
         </div>
         <div class="relative px-4 py-10 bg-white shadow-lg sm:rounded-3xl sm:p-20">
-            <div class="max-w-md mx-auto">
-                <% if(errorMsg || successMsg) { %>
-                    <div class="mx-auto text-center p-2 bg-slate-200 border-2 rounded-lg">
-                        <div class="mx-auto text-center font-bold text-green-400"> <%= successMsg %> </div>
-                        <div class="mx-auto text-center font-bold text-red-400"> <%= errorMsg %> </div>
-                    </div>
-                <% } %>
+            <div class="max-w-md mx-auto">                
                 <div>
                     <h1 class="text-2xl font-semibold mb-4">Signup Now</h1>
                 </div>
-                <form action="/signup" method="POST" class="divide-y divide-gray-200">
+                <form action="/signup" method="POST" class="divide-y divide-gray-200" novalidate>
                     <div class="py-1 text-base leading-6 space-y-4 text-gray-700 sm:text-lg sm:leading-7">
                         <div class="relative">
-                            <input autocomplete="off" name="name" type="text" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Your Name" />
+                            <input autocomplete="off" name="name" type="text" value="<%= oldData.name %>"
+                                class="<%= errorFields.find( e => e === 'name') ? 'border-red-500' : '' %> peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Your Name" />
                             <label for="name" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Your Name :</label>
                         </div>
                         <div class="relative">
-                            <input autocomplete="off" type="email" name="email" type="text" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Email address" required />
+                            <input type="email" name="email" type="text" value="<%= oldData.email %>"
+                                class="<%= errorFields.find( e => e === 'email') ? 'border-red-500' : '' %> peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Email address" required />
                             <label for="email" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Email :</label>
                         </div>
                         <div class="relative">
-                            <input autocomplete="off" type="password" name="password" type="password" class="peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Password" required />
+                            <input autocomplete="off" type="password" name="password" type="password" value="<%= oldData.password %>"
+                                class="<%= errorFields.find( e => e === 'password') ? 'border-red-500' : '' %> peer placeholder-transparent h-10 w-full border-b-2 border-gray-300 text-gray-900 focus:outline-none focus:borer-rose-600" placeholder="Password" required />
                             <label for="password" class="absolute left-0 -top-3.5 text-gray-600 text-sm peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-440 peer-placeholder-shown:top-2 transition-all peer-focus:-top-3.5 peer-focus:text-gray-600 peer-focus:text-sm">Password :</label>
                         </div>
                         <div class="relative text-center">
@@ -36,6 +33,7 @@
                             </svg></span></a>
                         </p>
                     </div>
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 </form>
             </div>
         </div>

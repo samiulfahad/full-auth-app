@@ -1,8 +1,7 @@
-const connectDB = require('./dbConnection');
+const connectDB = require('../dbConnection');
 const { ObjectId } = require('mongodb');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
-
 
 const User  = class User {
     constructor(name, email, password){
@@ -20,7 +19,7 @@ const User  = class User {
             return user
         } 
         catch(err){
-            console.log('Error in creating user');
+            console.log('Error in creating user')
             if(err.code === 11000) {
                 return 11000
             }
@@ -58,11 +57,11 @@ const User  = class User {
                 return null
             }
             const resetToken = await crypto.randomBytes(32).toString('hex')
-            const resetTokenExpiration = Date.now() + 180000
+            const resetTokenExpiration = Date.now() + 600000
             user.resetToken = resetToken
             user.resetTokenExpiration = resetTokenExpiration
             await db.collection('users').updateOne({email}, {$set: {resetToken, resetTokenExpiration}})
-            return {userId: user._id, resetToken}
+            return { userId: user._id, resetToken}
         }
         catch(err){
             console.log('Error in Finding User');
@@ -71,7 +70,6 @@ const User  = class User {
 
         }
     }
-
 
     static async FindResetToken(userId, resetToken) {
         try {
@@ -89,7 +87,6 @@ const User  = class User {
             return null
         }
     }
-
 
     static async ResetPassword(userId, resetToken, password) {
         try {
@@ -110,7 +107,6 @@ const User  = class User {
             return null
         }
     }
-
 }
 
 module.exports = User

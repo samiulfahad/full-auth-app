@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('head') %>
+<body class="bg-gray-200">
+    <section>
+        <%- include('nav') %>
+    </section>
+    
+    <section>
+        <div class="max-w-2xl mx-auto mt-8">
+            <% if(successMsg) { %>
+                <div class="mx-auto text-center p-2 bg-slate-200 border-2 rounded-lg">
+                    <div class="mx-auto text-center font-bold text-black"> <%= successMsg %> </div>
+                </div>
+            <% } %>
+        </div>          
+    </section>
+</body>
+</html>

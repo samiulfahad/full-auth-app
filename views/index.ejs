@@ -7,13 +7,13 @@
         <% if(!isLoggedIn) { %>
 
             <div class="max-w-4xl mx-auto flex flex-col md:flex-row justify-center items-center md:px-10 md:space-x-16">
-                <%- include('loginForm') %>
+                <%- include('./forms/loginForm') %>
             </div>
 
         <% } else { %>
 
             <div class="text-lg text-center mx-auto max-w-4xl font-bold mt-10 text-green-500">
-                <p>Your are Logged In and Your Session will be expired after 30 Sec</p>
+                <p>Your are Logged In and Your Session will be expired after 30 Sec of inactivity</p>
             </div>
 
         <% } %>
