@@ -1,6 +1,6 @@
 const User = require('../model/userModel');
 const { body, validationResult } = require('express-validator');
-const mailer = require('../nodeMailerConfig');
+const mailer = require('../emailSender/emailSender');
 
 
 exports.getSignup = (req, res, next) => {
@@ -10,25 +10,6 @@ exports.getSignup = (req, res, next) => {
 
 exports.postSignup = async (req, res, next) => {
     try {
-        const validationError = validationResult(req)
-        if( !validationError.isEmpty() ) {
-            let errorFields = []
-            let errorMsg = ''
-            validationError.array().forEach( e => {
-                errorFields.push(e.param)
-                if( !errorMsg ) {
-                    errorMsg = e.msg
-                } else {
-                   errorMsg = errorMsg + '.  ' + e.msg 
-                }
-            })
-            const oldData = {
-                name: req.body.name,
-                email: req.body.email,
-                password: req.body.password
-            }
-            return res.render('signup', {errorMsg, errorFields, oldData})
-        }
         const name = req.body.name
         const email = req.body.email
         const password = req.body.password
@@ -62,12 +43,6 @@ exports.postLogin = async (req, res, next) => {
     try{
         const email = req.body.email
         const password = req.body.password
-        const errors = validationResult(req)
-        if( !errors.isEmpty() ) {
-            const errorMsg = errors.array()[0].msg
-            const oldData = { email, password}
-            return res.render('login', {errorMsg, oldData})            
-        }
         const user = await User.Login(email, password)
         if(!user){
             const oldData = {email, password}
@@ -100,11 +75,6 @@ exports.getResetPassword = (req, res, next) => {
 
 exports.postResetPassword = async (req, res, next) => {
     try {
-        const errors = validationResult(req)
-        if (!errors.isEmpty()) {
-            const errorMsg = errors.array()[0].msg
-            return res.render('resetPassword', {errorMsg})
-        }
         const email = req.body.email
         const user = await User.EmailResetToken(email)
         if(!user){
@@ -154,18 +124,11 @@ exports.postUpdatePassword = async (req, res, next) => {
     }
 }
 
-// Validation Functions
-exports.signupValidator = [
-        body('name').isAlpha().withMessage('Name should contain only letters')
-            .isLength({min:3, max:18}).withMessage('Name should have min 3 and max 10 characters').trim(),
-        body('email').isEmail().withMessage('Please enter a valid email address').normalizeEmail().trim(),
-        body('password').isLength({min: 3, max: 12}).withMessage('Password should have min length of 3 and max 12')
-    ]
-
-exports.loginValidator = [
-            body('email', 'Please Enter a valid email').isEmail().normalizeEmail().trim()
-        ]
-
-exports.resetPasswordValidator = [
-            body('email', 'Please Enter a valid email').isEmail().normalizeEmail().trim()
-        ]
+exports.protected = (req, res)=> {
+    if( !req.session.isLoggedIn ) {
+        req.session.errorMsg = 'Please Login to visit this page'
+        req.session.redirectUrl = '/protected'
+        return res.redirect('/login')
+    }
+    res.render('protected', {successMsg: 'This is a Protected Route. You are logged in and you have access to this route'})
+}

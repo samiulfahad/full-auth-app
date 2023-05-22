@@ -15,4 +15,5 @@ const nonLoggedInOnly = (req, res, next) => {
     next()
 }
 
-module.exports = { loggedInOnly, nonLoggedInOnly }
+exports.loggedInOnly = loggedInOnly
+exports.nonLoggedInOnly = nonLoggedInOnly

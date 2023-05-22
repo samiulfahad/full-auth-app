@@ -1,4 +1,4 @@
-const connectDB = require('../dbConnection');
+const connectDB = require('../databaseConnection/dbConnection');
 const { ObjectId } = require('mongodb');
 const crypto = require('crypto');
 const bcrypt = require('bcryptjs');

@@ -1,0 +1,20 @@
+<section>
+    <div class="relative min-w-full mx-auto bg-gradient-to-r font-mono font-bold from-sky-300 to-blue-700 py-6">
+        <div class="hidden md:block absolute left-32 top-10 text-white">
+            <p class="-rotate-90 font-bold font-mono bg-gradient-to-r from-indigo-700 to-sky-500 text-center px-4 text-xl">Auth App</p>
+        </div>
+        <div class="mx-auto flex flex-col md:flex-row justify-center items-center gap-4 text-center bg-gradient-to-r from-sky-300 to-blue-700">
+            <a href="/" class="text-white px-3 py-a border-2 border-white font-bold">Home</a>
+            <a href="/protected" class="px-2 py-1 bg-indigo-600 text-white rounded text-sm">Protected Route</a>
+            <% if(!isLoggedIn) { %>
+                <a href="/login" class="px-2 py-1 bg-indigo-600 text-white rounded text-sm">Login</a>
+                <a href="/signup" class="px-2 py-1 bg-emerald-400 text-white rounded text-sm">Signup</a>
+            <% } else { %>
+                <form action="/logout" method="POST">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button type="submit" class="px-2 py-1 bg-red-700 text-white rounded text-sm">Logout</button>
+                </form>
+            <% } %>
+        </div>
+    </div>
+</section>
