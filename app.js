@@ -40,7 +40,7 @@ app.use((req, res, next) => {
 
 // CSRF Protection
 const csrfProtection = csrf()
-app.use(csrfProtection)         // Check CSRF Token in incoming request 
+app.use(csrfProtection)         // Check valid CSRF Token in incoming request 
 app.use((req, res, next) => {   // Pass CSRF token to view
     res.locals.csrfToken = req.csrfToken()
     next()
