@@ -49,6 +49,12 @@ app.use((req, res, next) => {   // Pass CSRF token to view
 // Main Router
 app.use(router)
 
+// 404 Handler
+app.use((req, res)=> {
+    res.render('404')
+})
+
+
 //Centralized Error Handling Middleware
 app.use((err, req, res, next) => {
     console.log(err);
