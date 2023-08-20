@@ -2,11 +2,13 @@ const express = require('express')
 const session = require('express-session')
 const MongoDBStore = require('connect-mongodb-session')(session)
 const csrf = require('csurf')
+const dotenv = require('dotenv');
 
 const connectDB = require('./databaseConnection/dbConnection')
 const { router } = require('./router/router');
 
 // Setting up the App
+dotenv.config()
 const app = express()
 app.use(express.json())
 app.set('view engine', 'ejs')
@@ -62,11 +64,12 @@ app.use((err, req, res, next) => {
     res.status(500).render('error')
 })
 
-app.listen(3000, async () => {
+const PORT = process.env.PORT || 3000
+app.listen(PORT, async () => {
     try {
         const db = await connectDB()
         await db.collection('users').createIndex({ email: 1 }, { unique: true })
-        console.log('Server is listening on port 3000');
+        console.log('Server is listening on port ' + PORT);
     }
     catch (err) {
         console.log(err);

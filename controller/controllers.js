@@ -22,7 +22,7 @@ exports.postSignup = async (req, res, next) => {
             return res.render('signup', {errorMsg, errorFields, oldData})
         }
         if(!result){
-            throw new Error('erroe in postSignup')
+            throw new Error('error in postSignup')
         }
         const successMsg = 'Account Created. Please Login'
         const oldData = { email, password: '' }
